@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://qa-db-server:5432/shopdb}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  h2:
+    console:
+      enabled: false
+
+flyway:
+  enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.assignment.shop: DEBUG
+

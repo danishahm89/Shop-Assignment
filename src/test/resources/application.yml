@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+flyway:
+  enabled: true
+  baseline-on-migrate: true
+
+logging:
+  level:
+    root: WARN
+    com.assignment.shop: INFO
+
+app:
+  jwt:
+    secret: dGhpc19pc19hX3Zlcnlfc2VjdXJlX2p3dF9zZWNyZXRfa2V5X2Zvcl9zaWduaW5nX3Rva2Vuc18xMjM0NTY3ODkw
+    expiration-ms: 3600000
+

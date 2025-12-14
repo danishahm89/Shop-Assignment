@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:shopdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+flyway:
+  enabled: true
+  baseline-on-migrate: true
+
+logging:
+  level:
+    root: INFO
+    com.assignment.shop: DEBUG
+

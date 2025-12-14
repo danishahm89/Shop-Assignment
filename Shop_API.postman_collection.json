@@ -1,0 +1,774 @@
+{
+	"info": {
+		"_postman_id": "shop-api-requests",
+		"name": "Shop API",
+		"description": "API requests for the Shop application.\n\n**Servers:**\n- Local: http://localhost:8080\n- Dev: http://dev-server:8080\n- QA: http://qa-server:8080\n- Prod: http://prod-server:8080\n\n**Login credentials:**\n- admin/admin123\n- premium/premium123\n- user/user123\n\n**Usage:**\n1. Set base_url in environment\n2. Login to get JWT token\n3. Token is saved automatically",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"    pm.environment.set(\"current_user\", jsonData.username);",
+									"    pm.environment.set(\"current_role\", jsonData.role);",
+									"    console.log(\"Admin login successful\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login as ADMIN user to get JWT token"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Premium User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"    pm.environment.set(\"current_user\", jsonData.username);",
+									"    pm.environment.set(\"current_role\", jsonData.role);",
+									"    console.log(\"Premium user login successful\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"premium\",\n  \"password\": \"premium123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login as PREMIUM_USER to get JWT token with 10% discount"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Regular User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"    pm.environment.set(\"current_user\", jsonData.username);",
+									"    pm.environment.set(\"current_role\", jsonData.role);",
+									"    console.log(\"User login successful\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"user\",\n  \"password\": \"user123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login as regular USER"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login"
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products (Default Pagination)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has pagination info\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('content');",
+									"    pm.expect(jsonData).to.have.property('totalElements');",
+									"    pm.expect(jsonData).to.have.property('totalPages');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Get all products with default pagination (page 0, size 20)\n\n**Default Sort:** name (ascending)\n\nIf you don't specify any sort parameter, products will be sorted by name alphabetically."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products by Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products?name=laptop",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"],
+							"query": [
+								{
+									"key": "name",
+									"value": "laptop",
+									"description": "Search by name (case-insensitive)"
+								}
+							]
+						},
+						"description": "Search products by name (case-insensitive partial match)"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Price Range",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products?minPrice=500&maxPrice=2000",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"],
+							"query": [
+								{
+									"key": "minPrice",
+									"value": "500"
+								},
+								{
+									"key": "maxPrice",
+									"value": "2000"
+								}
+							]
+						},
+						"description": "Filter products by price range"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Available Products Only",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products?available=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"],
+							"query": [
+								{
+									"key": "available",
+									"value": "true",
+									"description": "Only products with quantity > 0"
+								}
+							]
+						},
+						"description": "Get only products that are in stock"
+					},
+					"response": []
+				},
+				{
+					"name": "Advanced Search (All Filters + Pagination)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products?name=laptop&minPrice=1000&maxPrice=3000&available=true&page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"],
+							"query": [
+								{
+									"key": "name",
+									"value": "laptop"
+								},
+								{
+									"key": "minPrice",
+									"value": "1000"
+								},
+								{
+									"key": "maxPrice",
+									"value": "3000"
+								},
+								{
+									"key": "available",
+									"value": "true"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Search with multiple filters and pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product details returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData).to.have.property('price');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						},
+						"description": "Get a single product by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product (Admin Only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"created_product_id\", jsonData.id);",
+									"    console.log(\"✅ Product created with ID:\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"MacBook Pro 16\\\"\",\n  \"description\": \"Apple M3 Max chip, 36GB RAM, 1TB SSD\",\n  \"price\": 3499.99,\n  \"quantity\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Create a new product (Admin role required)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product (Admin Only)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"MacBook Pro 16\\\" (Updated)\",\n  \"description\": \"Apple M3 Max chip, 64GB RAM, 2TB SSD\",\n  \"price\": 4299.99,\n  \"quantity\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						},
+						"description": "Update an existing product (Admin role required)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product (Admin Only)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						},
+						"description": "Soft delete a product (Admin role required). Product status is set to DELETED"
+					},
+					"response": []
+				}
+			],
+			"description": "Product management endpoints"
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Place Order (Regular User - No Discount)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Order created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Discount calculation\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(\"Subtotal:\", jsonData.subtotal);",
+									"    console.log(\"Discount:\", jsonData.discountAmount);",
+									"    console.log(\"Total:\", jsonData.totalPrice);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Regular user placing order - no discount unless order > $500"
+					},
+					"response": []
+				},
+				{
+					"name": "Place Order (Premium User - 10% Discount)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Premium discount applied\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.discountAmount).to.be.above(0);",
+									"    console.log(\"✅ Premium discount applied: $\" + jsonData.discountAmount);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 3,\n      \"quantity\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Premium user gets automatic 10% discount"
+					},
+					"response": []
+				},
+				{
+					"name": "Place Large Order (Premium - Stacked Discounts)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Multiple discounts applied\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(\"Subtotal: $\" + jsonData.subtotal);",
+									"    console.log(\"Total discount: $\" + jsonData.discountAmount);",
+									"    console.log(\"Final price: $\" + jsonData.totalPrice);",
+									"    console.log(\"✅ Premium (10%) + High-value (5%) = 15% total discount\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 3,\n      \"quantity\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Premium user ordering > $500 gets both discounts (10% + 5% = 15% total)"
+					},
+					"response": []
+				},
+				{
+					"name": "Place High-Value Order (Regular User)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"High-value discount applied\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(\"✅ 5% high-value discount for order > $500\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 3\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Regular user ordering > $500 gets 5% discount"
+					},
+					"response": []
+				}
+			],
+			"description": "Order management and discount testing"
+		},
+		{
+			"name": "Health & Monitoring",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "health"]
+						},
+						"description": "Check application health status"
+					},
+					"response": []
+				},
+				{
+					"name": "Application Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/info",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "info"]
+						},
+						"description": "Get application information"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "metrics"]
+						},
+						"description": "Get available metrics"
+					},
+					"response": []
+				}
+			],
+			"description": "Spring Actuator endpoints for monitoring"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "current_user",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "current_role",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "created_product_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
+

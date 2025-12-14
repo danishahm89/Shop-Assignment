@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: shop
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  jpa:
+    open-in-view: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dGhpc19pc19hX3Zlcnlfc2VjdXJlX2p3dF9zZWNyZXRfa2V5X2Zvcl9zaWduaW5nX3Rva2Vuc18xMjM0NTY3ODkw}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
