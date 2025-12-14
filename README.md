@@ -66,6 +66,21 @@ Application starts at `http://localhost:8080`
 
 ## API Documentation
 
+### Interactive Documentation (Swagger UI)
+
+The API includes interactive Swagger UI documentation available at:
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+- **OpenAPI YAML**: http://localhost:8080/v3/api-docs.yaml
+
+The Swagger UI provides an interactive interface where you can:
+- Browse all available endpoints
+- View request/response schemas
+- Test API requests directly from the browser
+- See authentication requirements for each endpoint
+
+All documentation endpoints are publicly accessible (no authentication required).
+
 ### Authentication
 
 **Login**
@@ -328,11 +343,20 @@ Set active profile:
 
 Import `Shop_API.postman_collection.json` for ready-to-use requests.
 
+The collection includes:
+- Authentication endpoints (login)
+- Product CRUD operations
+- Order management
+- Spring Boot Actuator endpoints
+- API Documentation (OpenAPI/Swagger) endpoints
+
 Setup:
 1. Import collection
 2. Create environment variable: `base_url = http://localhost:8080`
 3. Login to get token (automatically saved)
 4. Use other endpoints
+
+**Tip**: Use the "API Documentation" folder to access OpenAPI spec endpoints, or open Swagger UI in your browser for interactive documentation.
 
 ## Build
 

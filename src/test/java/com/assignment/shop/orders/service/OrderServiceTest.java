@@ -122,7 +122,7 @@ class OrderServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getUserId()).isEqualTo(1L);
-        assertThat(result.getDiscountAmount()).isEqualTo(BigDecimal.ZERO);
+        assertThat(result.getDiscountAmount()).isEqualByComparingTo(BigDecimal.ZERO);
         verify(orderRepo).save(any(Order.class));
     }
 
@@ -146,7 +146,7 @@ class OrderServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getDiscountAmount()).isGreaterThan(BigDecimal.ZERO);
-        assertThat(result.getDiscountAmount()).isEqualTo(discount);
+        assertThat(result.getDiscountAmount()).isEqualByComparingTo(discount);
     }
 
     @Test

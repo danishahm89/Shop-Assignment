@@ -1602,6 +1602,54 @@
 				}
 			],
 			"description": "Spring Boot Actuator endpoints for application monitoring and management.\n\nEndpoints:\n- /actuator/health - Application health status\n- /actuator/info - Application and build information\n- /actuator/metrics - Application metrics\n\nAll endpoints are publicly accessible (no authentication required)."
+		},
+		{
+			"name": "API Documentation",
+			"item": [
+				{
+					"name": "Get OpenAPI JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v3/api-docs",
+							"host": ["{{base_url}}"],
+							"path": ["v3", "api-docs"]
+						},
+						"description": "Retrieve the OpenAPI 3.0 specification in JSON format.\n\nThis endpoint returns the complete API documentation in machine-readable format."
+					},
+					"response": []
+				},
+				{
+					"name": "Get OpenAPI YAML",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v3/api-docs.yaml",
+							"host": ["{{base_url}}"],
+							"path": ["v3", "api-docs.yaml"]
+						},
+						"description": "Retrieve the OpenAPI 3.0 specification in YAML format.\n\nThis endpoint returns the complete API documentation in YAML format."
+					},
+					"response": []
+				},
+				{
+					"name": "Swagger UI (Open in Browser)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/swagger-ui.html",
+							"host": ["{{base_url}}"],
+							"path": ["swagger-ui.html"]
+						},
+						"description": "Open Swagger UI in your browser for interactive API documentation.\n\nNote: This endpoint is best viewed in a web browser where you can:\n- Explore all API endpoints\n- Test requests directly from the UI\n- View request/response schemas\n- See authentication requirements"
+					},
+					"response": []
+				}
+			],
+			"description": "OpenAPI/Swagger documentation endpoints.\n\nEndpoints:\n- /v3/api-docs - OpenAPI JSON specification\n- /v3/api-docs.yaml - OpenAPI YAML specification\n- /swagger-ui.html - Interactive API documentation UI\n\nAll endpoints are publicly accessible (no authentication required)."
 		}
 	],
 	"event": [

@@ -27,6 +27,20 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final CustomUserDetailsService userDetailsService;
 
+    public static final String[] PUBLIC_URLS = {
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-resources/**",
+            "/api-docs/**",
+            "/webjars/**",
+            "/api/auth/**",
+            "/h2-console/**",
+            "/actuator/**",
+            "/api/v1/users/**"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -49,10 +63,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                                 "/api-docs/**", "/swagger-resources/**", "/webjars/**",
-                                 "/api/auth/**", "/h2-console/**", "/actuator/**",
-                                 "/api/v1/users/**").permitAll()
+                    .requestMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
