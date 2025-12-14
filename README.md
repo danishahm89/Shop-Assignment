@@ -52,6 +52,13 @@ Application starts at `http://localhost:8080`
 - Flyway for version-controlled migrations
 - Soft deletes for products (status-based)
 
+**Validation:**
+- Bean Validation (JSR-380) on all DTOs
+- Comprehensive field-level constraints
+- Nested validation for complex objects
+- Custom validation messages
+- Global exception handling with detailed field errors
+
 **Performance:**
 - Database indexes on frequently queried columns (status, name, user_id)
 - Pagination for large datasets
@@ -118,6 +125,27 @@ Content-Type: application/json
 }
 ```
 
+**Validation Rules:**
+- `name`: Required, 3-100 characters
+- `description`: Optional, max 500 characters
+- `price`: Required, must be > 0, max 10 digits + 2 decimals
+- `quantity`: Required, must be >= 0
+
+**Validation Error Example:**
+```json
+{
+  "timestamp": "2025-12-14T10:00:00",
+  "status": 400,
+  "error": "Validation Failed",
+  "message": "Invalid input data",
+  "fieldErrors": {
+    "name": "Product name is required",
+    "price": "Price must be greater than 0",
+    "quantity": "Quantity cannot be negative"
+  }
+}
+```
+
 **Update Product** (Admin only)
 ```http
 PUT /api/products/{id}
@@ -157,10 +185,36 @@ Content-Type: application/json
 }
 ```
 
+**Validation Rules:**
+- `items`: Required, must contain at least 1 item, max 100 items
+- `items[].productId`: Required, must be positive number
+- `items[].quantity`: Required, must be between 1 and 1000
+
 Response includes:
 - Order details
 - Applied discounts
 - Final total
+
+**Invalid Order Example:**
+```http
+POST /api/v1/orders
+{
+  "items": []
+}
+```
+
+Response (400 Bad Request):
+```json
+{
+  "timestamp": "2025-12-14T10:00:00",
+  "status": 400,
+  "error": "Validation Failed",
+  "message": "Invalid input data",
+  "fieldErrors": {
+    "items": "Order must contain at least one item"
+  }
+}
+```
 
 ## Database Schema
 
@@ -181,24 +235,71 @@ Response includes:
 
 ## Error Responses
 
+### Standard Error Format
 ```json
 {
   "timestamp": "2025-12-14T10:00:00",
   "status": 404,
   "error": "Not Found",
-  "message": "Product not found",
-  "path": "/api/products/999"
+  "message": "Product not found"
+}
+```
+
+### Validation Error Format
+```json
+{
+  "timestamp": "2025-12-14T10:00:00",
+  "status": 400,
+  "error": "Validation Failed",
+  "message": "Invalid input data",
+  "fieldErrors": {
+    "name": "Product name is required",
+    "price": "Price must be greater than 0",
+    "quantity": "Quantity cannot be negative",
+    "email": "Email must be valid"
+  }
 }
 ```
 
 Common status codes:
 - 200 - Success
 - 201 - Created
-- 400 - Bad request
+- 400 - Bad request / Validation failed
 - 401 - Unauthorized
 - 403 - Forbidden
 - 404 - Not found
+- 409 - Conflict (duplicate resource)
 - 500 - Server error
+
+## Input Validation
+
+All DTOs are validated using Bean Validation (JSR-380). See [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md) for complete details.
+
+### Common Validation Constraints
+
+**ProductDto:**
+- Name: 3-100 characters, required
+- Description: max 500 characters, optional
+- Price: > 0, max 10 digits + 2 decimals, required
+- Quantity: >= 0, required
+
+**OrderDto:**
+- Items: 1-100 items, required
+- Each item validated individually
+
+**OrderItemDto:**
+- Product ID: positive number, required
+- Quantity: 1-1000, required
+
+**UserDto:**
+- Username: 3-50 characters, alphanumeric + underscore only, required
+- Password: 6-100 characters, required
+- Email: valid email format, required
+- Role: required
+
+**LoginRequest:**
+- Username: required, not blank
+- Password: required, not blank
 
 ## Project Structure
 

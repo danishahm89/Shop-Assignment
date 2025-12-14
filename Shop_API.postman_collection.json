@@ -469,6 +469,264 @@
 						"description": "Soft delete a product (Admin role required). Product status is set to DELETED"
 					},
 					"response": []
+				},
+				{
+					"name": "Validation Test - Missing Product Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error message present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('fieldErrors');",
+									"    pm.expect(jsonData.fieldErrors).to.have.property('name');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Missing name field\",\n  \"price\": 999.99,\n  \"quantity\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Test validation: Product name is required"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Name Too Short",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Name length validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.name).to.include('between 3 and 100 characters');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"AB\",\n  \"price\": 999.99,\n  \"quantity\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Test validation: Product name must be at least 3 characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Negative Price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Price validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.price).to.include('greater than 0');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Invalid Product\",\n  \"price\": -100,\n  \"quantity\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Test validation: Price must be greater than 0"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Negative Quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Quantity validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.quantity).to.include('cannot be negative');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Invalid Product\",\n  \"price\": 999.99,\n  \"quantity\": -5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Test validation: Quantity cannot be negative"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Multiple Errors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Multiple validation errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var errorCount = Object.keys(jsonData.fieldErrors).length;",
+									"    pm.expect(errorCount).to.be.at.least(3);",
+									"    console.log('Validation errors:', jsonData.fieldErrors);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"AB\",\n  \"price\": -100,\n  \"quantity\": -5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Test validation: Multiple fields invalid at once"
+					},
+					"response": []
 				}
 			],
 			"description": "Product management endpoints"
@@ -673,15 +931,484 @@
 						"description": "Regular user ordering > $500 gets 5% discount"
 					},
 					"response": []
+				},
+				{
+					"name": "Validation Test - Empty Order Items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Items validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.items).to.include('at least one item');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Test validation: Order must have at least one item"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Invalid Quantity (Zero)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Quantity validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log('Validation errors:', jsonData.fieldErrors);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 0\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Test validation: Order item quantity must be at least 1"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Missing Product ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Product ID validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log('Validation errors:', jsonData.fieldErrors);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"quantity\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Test validation: Product ID is required"
+					},
+					"response": []
+				},
+				{
+					"name": "Validation Test - Excessive Quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Quantity too high error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log('Validation errors:', jsonData.fieldErrors);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1001\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders"]
+						},
+						"description": "Test validation: Quantity cannot exceed 1000"
+					},
+					"response": []
 				}
 			],
 			"description": "Order management and discount testing"
+		},
+		{
+			"name": "Validation Tests",
+			"item": [
+				{
+					"name": "Login - Missing Username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Username validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.username).to.include('required');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Test validation: Username is required"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Missing Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Password validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.password).to.include('required');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Test validation: Password is required"
+					},
+					"response": []
+				},
+				{
+					"name": "User - Invalid Email Format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Email validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.email).to.include('valid');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\",\n  \"email\": \"invalid-email-format\",\n  \"role\": \"USER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Test validation: Email must be in valid format"
+					},
+					"response": []
+				},
+				{
+					"name": "User - Password Too Short",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Password length validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.password).to.include('between 6 and 100');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"12345\",\n  \"email\": \"test@example.com\",\n  \"role\": \"USER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Test validation: Password must be at least 6 characters"
+					},
+					"response": []
+				},
+				{
+					"name": "User - Invalid Username Pattern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Username pattern validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fieldErrors.username).to.include('letters, numbers, and underscores');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"test-user!\",\n  \"password\": \"password123\",\n  \"email\": \"test@example.com\",\n  \"role\": \"USER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Test validation: Username can only contain alphanumeric and underscore"
+					},
+					"response": []
+				}
+			],
+			"description": "Comprehensive validation testing for all DTOs"
 		},
 		{
 			"name": "Health & Monitoring",
 			"item": [
 				{
 					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Application is UP\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('UP');",
+									"});",
+									"",
+									"pm.test(\"Response has components\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('components');",
+									"    console.log('Health Status:', jsonData.status);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -690,12 +1417,40 @@
 							"host": ["{{base_url}}"],
 							"path": ["actuator", "health"]
 						},
-						"description": "Check application health status"
+						"description": "Check application health status. Returns UP if healthy, DOWN if unhealthy.\n\nUsed for:\n- Load balancer health checks\n- Kubernetes liveness/readiness probes\n- Monitoring systems\n\nComponents checked:\n- Database connectivity\n- Disk space\n- Ping"
 					},
 					"response": []
 				},
 				{
 					"name": "Application Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has application info\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('app');",
+									"    pm.expect(jsonData.app).to.have.property('name');",
+									"    pm.expect(jsonData.app).to.have.property('version');",
+									"});",
+									"",
+									"pm.test(\"Has build info\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('build');",
+									"    console.log('App Name:', jsonData.app.name);",
+									"    console.log('App Version:', jsonData.app.version);",
+									"    console.log('Build Time:', jsonData.build.time);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -704,12 +1459,33 @@
 							"host": ["{{base_url}}"],
 							"path": ["actuator", "info"]
 						},
-						"description": "Get application information"
+						"description": "Get application information including:\n\n- Application name and version\n- Build information (time, artifact, group)\n- Contact information\n- Company details\n\nBuild info is auto-generated by Maven during build process."
 					},
 					"response": []
 				},
 				{
-					"name": "Metrics",
+					"name": "Metrics - List All",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has metrics names\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('names');",
+									"    pm.expect(jsonData.names).to.be.an('array');",
+									"    pm.expect(jsonData.names.length).to.be.above(0);",
+									"    console.log('Available metrics:', jsonData.names.length);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -718,12 +1494,114 @@
 							"host": ["{{base_url}}"],
 							"path": ["actuator", "metrics"]
 						},
-						"description": "Get available metrics"
+						"description": "List all available metrics.\n\nCategories include:\n- JVM metrics (memory, GC, threads)\n- System metrics (CPU, load)\n- HTTP metrics (requests, responses)\n- Database metrics (connections)\n- Custom application metrics"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics - JVM Memory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has memory measurement\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('measurements');",
+									"    pm.expect(jsonData.measurements[0]).to.have.property('value');",
+									"    console.log('JVM Memory Used (bytes):', jsonData.measurements[0].value);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics/jvm.memory.used",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "metrics", "jvm.memory.used"]
+						},
+						"description": "Get JVM memory usage details.\n\nFilters available:\n- tag=area:heap\n- tag=area:nonheap\n- tag=id:PS Eden Space"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics - HTTP Requests",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has HTTP metrics\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.name).to.eql('http.server.requests');",
+									"    console.log('HTTP Request Metrics:', jsonData.measurements);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics/http.server.requests",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "metrics", "http.server.requests"]
+						},
+						"description": "Get HTTP request metrics including:\n- Request count\n- Response times\n- Status codes\n- URIs\n\nFilter by tags:\n- ?tag=status:200\n- ?tag=uri:/api/products\n- ?tag=method:GET"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics - System CPU",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has CPU measurement\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var cpuUsage = jsonData.measurements[0].value;",
+									"    pm.expect(cpuUsage).to.be.at.least(0);",
+									"    pm.expect(cpuUsage).to.be.at.most(1);",
+									"    console.log('CPU Usage:', (cpuUsage * 100).toFixed(2) + '%');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics/system.cpu.usage",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "metrics", "system.cpu.usage"]
+						},
+						"description": "Get system CPU usage.\n\nValue is between 0.0 and 1.0:\n- 0.0 = 0% CPU usage\n- 1.0 = 100% CPU usage"
 					},
 					"response": []
 				}
 			],
-			"description": "Spring Actuator endpoints for monitoring"
+			"description": "Spring Boot Actuator endpoints for application monitoring and management.\n\nEndpoints:\n- /actuator/health - Application health status\n- /actuator/info - Application and build information\n- /actuator/metrics - Application metrics\n\nAll endpoints are publicly accessible (no authentication required)."
 		}
 	],
 	"event": [

@@ -16,6 +16,32 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    info:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Shop E-Commerce API
+    description: RESTful API for e-commerce platform with JWT authentication
+    version: 1.0.0
+  company:
+    name: Shop Assignment
+  contact:
+    email: danishahm89@github.com
+    github: https://github.com/danishahm89/Shop-Assignment
+
 app:
   jwt:
     secret: ${JWT_SECRET:dGhpc19pc19hX3Zlcnlfc2VjdXJlX2p3dF9zZWNyZXRfa2V5X2Zvcl9zaWduaW5nX3Rva2Vuc18xMjM0NTY3ODkw}
