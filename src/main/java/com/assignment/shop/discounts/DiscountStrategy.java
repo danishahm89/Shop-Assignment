@@ -7,6 +7,5 @@ import java.math.BigDecimal;
 
 public interface DiscountStrategy {
     DiscountReportDto evaluate(User user, BigDecimal subtotal);
-    BigDecimal applyDiscount(User user, BigDecimal subtotal);
 
 }

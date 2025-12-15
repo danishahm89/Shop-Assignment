@@ -48,10 +48,6 @@ public class DiscountEngine implements DiscountStrategy {
                 .build();
     }
 
-    @Override
-    public BigDecimal applyDiscount(User user, BigDecimal subtotal) {
-        return evaluate(user, subtotal).getTotalDiscount();
-    }
 
     private boolean hasValue(BigDecimal amount) {
         return nonNull(amount) && amount.compareTo(BigDecimal.ZERO) > 0;
